@@ -16,18 +16,15 @@ public class EntityToString extends DoFn<Entity, String> {
         Map<String, Value> propMap = payment.getPropertiesMap();
 
         // Grab all relevant fields
-        String paymentId = propMap.get("id").getKeyValue().toString();
-        String paymentName = propMap.get("payment_name").getStringValue();
-        String accountId = propMap.get("account_id").getStringValue();
-        String accountNumber = propMap.get("account_number").getStringValue();
-        String accountName = propMap.get("account_name").getStringValue();
-        Double amount = propMap.get("amount").getDoubleValue();
-        String effectiveDate = propMap.get("effective_date").getTimestampValue().toString();
+        String paymentId = propMap.get("payment_id")==null?"":propMap.get("payment_id").getKeyValue().toString();
+        String paymentName = propMap.get("payment_number")==null?"":propMap.get("payment_number").getStringValue();
+        String accountId = propMap.get("account_id")==null?"":propMap.get("account_id").getStringValue();
+        String accountNumber = propMap.get("account_number")==null?"":propMap.get("account_number").getStringValue();
+        String accountName = propMap.get("account_name")==null?"":propMap.get("account_name").getStringValue();
+        Double amount = propMap.get("amount")==null?null:propMap.get("amount").getDoubleValue();
+        String effectiveDate = propMap.get("effective_date")==null?"":propMap.get("effective_date").getTimestampValue().toString();
 
-        out.output("Payment: " + paymentId + "paymentName:" +paymentName + "amount" + amount + "Effective Date: " + effectiveDate);
-
-
-
+        out.output("Payment: " + paymentId + "; paymentName:" +paymentName + "; amount" + amount + "; Effective Date: " + effectiveDate);
 
     }
 

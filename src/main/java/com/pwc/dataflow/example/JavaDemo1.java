@@ -44,7 +44,8 @@ public class JavaDemo1 {
 
         Pipeline pipeline = Pipeline.create(options);
         pipeline.apply("ReadLines",
-                read(options).withLiteralGqlQuery("SELECT * FROM Payment"))
+                DatastoreIO.v1().read().withProjectId(options.as(GcpOptions.class).getProject())
+                        .withLiteralGqlQuery("SELECT * FROM Payment"))
                 .apply("EntityToString", ParDo.of(new EntityToString()))
                 .apply("write ", TextIO.write().to(options.getOutput()));
 
