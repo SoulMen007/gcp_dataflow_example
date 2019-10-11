@@ -6,9 +6,11 @@ import org.apache.beam.sdk.transforms.DoFn;
 
 import java.io.IOException;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EntityToString extends DoFn<Entity, String> {
-
+   private static final Logger LOG = LoggerFactory.getLogger(EntityToString.class);
     @ProcessElement
     public void processElement(@Element Entity payment, OutputReceiver<String> out)
             throws IOException {
@@ -16,15 +18,19 @@ public class EntityToString extends DoFn<Entity, String> {
         Map<String, Value> propMap = payment.getPropertiesMap();
 
         // Grab all relevant fields
-        String paymentId = propMap.get("payment_id")==null?"":propMap.get("payment_id").getKeyValue().toString();
+        //LOG.info("1111===============>"+propMap.get("payment_id").getKeyValue().getPartitionId().getProjectId());
+        //System.out.println("22222===============>"+propMap.get("payment_id").getKeyValue().getPartitionId().getProjectId());
+        String paymentId = propMap.get("payment_id")==null?"":propMap.get("payment_id").getKeyValue().getPartitionId().getProjectId().toString();
         String paymentName = propMap.get("payment_number")==null?"":propMap.get("payment_number").getStringValue();
         String accountId = propMap.get("account_id")==null?"":propMap.get("account_id").getStringValue();
         String accountNumber = propMap.get("account_number")==null?"":propMap.get("account_number").getStringValue();
         String accountName = propMap.get("account_name")==null?"":propMap.get("account_name").getStringValue();
         Double amount = propMap.get("amount")==null?null:propMap.get("amount").getDoubleValue();
-        String effectiveDate = propMap.get("effective_date")==null?"":propMap.get("effective_date").getTimestampValue().toString();
+        Long effectiveDate = propMap.get("effective_date")==null?null:propMap.get("effective_date").getTimestampValue().getSeconds();
+        //LOG.info("333===============>"+propMap.get("effective_date").getTimestampValue().getSeconds());
 
-        out.output("Payment: " + paymentId + "; paymentName:" +paymentName + "; amount" + amount + "; Effective Date: " + effectiveDate);
+        String jsonString = "{\"payment\":\""+ paymentId +"\",\"paymentName\":\""+paymentName +"\",\"amount\":\""+amount+"\",\"effectiveDate\":\""+ effectiveDate+"\"}";
+        out.output(jsonString);
 
     }
 

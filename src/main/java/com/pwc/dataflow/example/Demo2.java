@@ -38,7 +38,7 @@ import org.apache.beam.sdk.values.TupleTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JavaDemo1 {
+public class Demo2 {
 
     public interface DemoOptions extends PipelineOptions {
 
@@ -62,7 +62,6 @@ public class JavaDemo1 {
         return read;
     }
 
-
     static void extractDatastore(DemoOptions options) {
 
         Pipeline pipeline = Pipeline.create(options);
@@ -70,10 +69,9 @@ public class JavaDemo1 {
                 DatastoreIO.v1().read().withProjectId(options.as(GcpOptions.class).getProject())
                         .withLiteralGqlQuery("SELECT * FROM Payment"))
                 .apply("EntityToString", ParDo.of(new EntityToString()))
-                .apply("write ", TextIO.write().to(options.getOutput()));//read the data from Datastore
-                //.apply(PubsubIO.writeStrings().to("projects/acuit-renfei-sandbox/topics/sam_task"));//publish to Pub/Sub
+                //.apply("write ", TextIO.write().to(options.getOutput()));//read the data from Datastore
+                .apply(PubsubIO.writeStrings().to("projects/acuit-renfei-sandbox/topics/sam_task"));//publish to Pub/Sub
         pipeline.run().waitUntilFinish();
-
     }
 
     public static void main(String[] args) {
